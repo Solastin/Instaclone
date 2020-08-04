@@ -38,7 +38,7 @@ class SignUpActivity : AppCompatActivity() {
         val password = password_signup.text.toString()
 
         when{
-            TextUtils.isEmpty(fullName) -> Toast.makeText(this, "Ffull name required", Toast.LENGTH_LONG).show()
+            TextUtils.isEmpty(fullName) -> Toast.makeText(this, "Full name required", Toast.LENGTH_LONG).show()
             TextUtils.isEmpty(userName) -> Toast.makeText(this, "User name required", Toast.LENGTH_LONG).show()
             TextUtils.isEmpty(email) -> Toast.makeText(this, "Email required", Toast.LENGTH_LONG).show()
             TextUtils.isEmpty(password) -> Toast.makeText(this, "Password required", Toast.LENGTH_LONG).show()
@@ -47,7 +47,7 @@ class SignUpActivity : AppCompatActivity() {
 
                 val progressDialog = ProgressDialog(this@SignUpActivity)
                 progressDialog.setTitle("Signin Up...")
-                progressDialog.setMessage("Please wait, this maytake a while...")
+                progressDialog.setMessage("Please wait, this may take a while...")
                 progressDialog.setCanceledOnTouchOutside(false)
                 progressDialog.show()
 
@@ -81,9 +81,9 @@ class SignUpActivity : AppCompatActivity() {
         val usersRef : DatabaseReference = FirebaseDatabase.getInstance().reference.child("Users")
         val userMap = HashMap<String,Any>()
         userMap["uid"]= currentUserID
-        userMap["fullname"]= currentUserID
-        userMap["username"]= currentUserID
-        userMap["email"]= currentUserID
+        userMap["fullname"]= fullName.toLowerCase()
+        userMap["username"]= userName.toLowerCase()
+        userMap["email"]= email
         userMap["bio"]= "Hei I'm using Kotin Café Instagram Clone App"
         userMap["image"]="https://firebasestorage.googleapis.com/v0/b/instagram-clone-app-ce043.appspot.com/o/Default%20Images%2FCapturar%20(2).PNG?alt=media&token=54c4f7ae-13ed-402b-9a63-b5749b6815fe"
 
