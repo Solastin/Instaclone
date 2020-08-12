@@ -3,20 +3,17 @@ package com.greenowl.instaclone.Fragments
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.renderscript.Sampler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.greenowl.instaclone.AccountSettingsActivitie
-import com.greenowl.instaclone.Adapter.UserAdapter
+import com.greenowl.instaclone.AccountSettingsActivity
 import com.greenowl.instaclone.Model.User
 import com.greenowl.instaclone.R
 import com.squareup.picasso.Picasso
@@ -74,7 +71,7 @@ class ProfileFragment : Fragment() {
 
 
             when{
-                getButtonText=="Edit Profile" -> startActivity(Intent(context,AccountSettingsActivitie::class.java))
+                getButtonText=="Edit Profile" -> startActivity(Intent(context,AccountSettingsActivity::class.java))
 
 
                 getButtonText=="Follow" ->{
@@ -121,45 +118,72 @@ class ProfileFragment : Fragment() {
 
                 getButtonText=="Following" ->{
 
-//                    firebaseUser?.uid.let { it1 ->
-//                        FirebaseDatabase.getInstance().reference
-//                            .child("Follow").child(it1.toString())
-//                            .child("Following").child(profileId)
-//                            .removeValue()
-//                    }
-//                    firebaseUser?.uid.let { it1 ->
-//                        FirebaseDatabase.getInstance().reference
-//                            .child("Follow").child(profileId)
-//                            .child("Followers").child(it1.toString())
-//                            .removeValue()
-//                    }
                     firebaseUser?.uid.let { it1 ->
                         FirebaseDatabase.getInstance().reference
                             .child("Follow").child(it1.toString())
                             .child("Following").child(profileId)
-                            .removeValue().addOnCompleteListener{task ->
-                                if(task.isSuccessful){
-
-
-                                    firebaseUser?.uid.let { it1 ->
-                                        FirebaseDatabase.getInstance().reference
-                                            .child("Follow").child(profileId)
-                                            .child("Followers").child(it1.toString())
-                                            .removeValue().addOnCompleteListener{task ->
-                                                if(task.isSuccessful){
-                                                    view?.edit_account_settings_btn?.text= "Follow"
-
-
-
-
-
-                                                }
-                                            }
-                                    }
-                                }
-
-                            }
+                            .removeValue()
                     }
+                    firebaseUser?.uid.let { it1 ->
+                        FirebaseDatabase.getInstance().reference
+                            .child("Follow").child(profileId)
+                            .child("Followers").child(it1.toString())
+                            .removeValue()
+                    }
+
+                    val followers = profileId.let{it1->
+                        FirebaseDatabase.getInstance().reference
+                            .child("Follow").child(it1.toString())
+                            .child("Followers")}
+
+                    followers.addValueEventListener(object:ValueEventListener{
+                        override fun onDataChange(p0: DataSnapshot)
+                        {
+                            if (p0.exists())
+                            {
+                                view?.total_followers?.text = p0.childrenCount.toString()
+                            }
+                            else
+                            {
+                                view?.total_followers?.text = "0"
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
+                    })
+
+
+
+
+
+
+
+
+
+//                    firebaseUser?.uid.let { it1 ->
+//                        FirebaseDatabase.getInstance().reference
+//                            .child("Follow").child(it1.toString())
+//                            .child("Following").child(profileId)
+//                            .removeValue().addOnCompleteListener{task ->
+//                                if(task.isSuccessful){
+//
+//
+//                                    firebaseUser?.uid.let { it1 ->
+//                                        FirebaseDatabase.getInstance().reference
+//                                            .child("Follow").child(profileId)
+//                                            .child("Followers").child(it1.toString())
+//                                            .removeValue().addOnCompleteListener{task ->
+//                                                if(task.isSuccessful){
+//                                                    view?.edit_account_settings_btn?.text= "Follow"
+//                                                }
+//                                            }
+//                                    }
+//                                }
+//
+//                            }
+//                    }
 
                 }
             }
@@ -234,8 +258,12 @@ class ProfileFragment : Fragment() {
     {
         val usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(profileId)
 
-        usersRef.addValueEventListener(object :ValueEventListener {
-            override fun onDataChange(p0: DataSnapshot) {
+        usersRef.addValueEventListener(object :ValueEventListener
+        {
+            override fun onDataChange(p0: DataSnapshot)
+            {
+
+
                /* if (context!= null)
                 {
                     return
